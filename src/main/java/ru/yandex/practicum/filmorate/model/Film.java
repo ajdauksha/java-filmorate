@@ -10,14 +10,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Slf4j
 @Data
 public class Film {
     private int id;
-    @NotNull(message = "Название фильма не может быть пустым")
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
     @Size(max = 200, message = "Описание не может быть длиннее 200 символов")
