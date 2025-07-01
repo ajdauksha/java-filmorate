@@ -37,7 +37,7 @@ public class FilmService {
         userService.getUserById(userId);
 
         Film film = filmStorage.getFilmById(filmId);
-        Set<Integer> likedByUsers =  film.getLikedByUsers();
+        Set<Integer> likedByUsers = film.getLikedByUsers();
 
         if (likedByUsers.contains(userId)) {
             throw new ValidationException("Пользователь %d уже поставил лайк фильму %d".formatted(userId, filmId));
@@ -52,7 +52,7 @@ public class FilmService {
         userService.getUserById(userId);
 
         Film film = filmStorage.getFilmById(filmId);
-        Set<Integer> likedByUsers =  film.getLikedByUsers();
+        Set<Integer> likedByUsers = film.getLikedByUsers();
 
         if (!likedByUsers.contains(userId)) {
             throw new ValidationException("Пользователь %d не ставил лайк фильму %d".formatted(userId, filmId));
