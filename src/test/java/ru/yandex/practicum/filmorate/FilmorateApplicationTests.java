@@ -6,9 +6,11 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -20,14 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class FilmorateApplicationTests {
+
+	@Autowired
 	private UserController userController;
+	@Autowired
 	private FilmController filmController;
 	private Validator validator;
 
 	@BeforeEach
 	void setUp() {
-		userController = new UserController();
-		filmController = new FilmController();
 		try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
 			validator = factory.getValidator();
 		}
@@ -173,11 +176,11 @@ class FilmorateApplicationTests {
 		user.setLogin("testLogin");
 		user.setBirthday(LocalDate.of(1990, 1, 1));
 
-		Exception exception = assertThrows(ValidationException.class, () ->
+		Exception exception = assertThrows(ResourceNotFoundException.class, () ->
 				userController.updateUser(user)
 		);
 
-		assertEquals("Пользователь не найден", exception.getMessage());
+		assertEquals("Пользователь c id 999 не найден", exception.getMessage());
 	}
 
 	@Test
@@ -189,11 +192,11 @@ class FilmorateApplicationTests {
 		film.setReleaseDate(LocalDate.of(2000, 1, 1));
 		film.setDuration(120);
 
-		Exception exception = assertThrows(ValidationException.class, () ->
+		Exception exception = assertThrows(ResourceNotFoundException.class, () ->
 				filmController.updateFilm(film)
 		);
 
-		assertEquals("Фильм не найден", exception.getMessage());
+		assertEquals("Фильм c id 999 не найден", exception.getMessage());
 	}
 
 	@Test
