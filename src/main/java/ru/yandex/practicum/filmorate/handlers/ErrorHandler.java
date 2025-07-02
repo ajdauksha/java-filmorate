@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.handlers;
 
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,25 +14,33 @@ import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
+
+    private static final String NOT_FOUND_TITLE = "Ресурс не найден";
+    private static final String VALIDATION_ERROR_TITLE = "Ошибка валидации";
+    private static final String INTERNAL_ERROR_TITLE = "Внутренняя ошибка";
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     public ErrorResponse handleNotFoundException(final ResourceNotFoundException e) {
-        return new ErrorResponse("Ресурс не найден", e.getMessage());
+        log.error("{}: {}", NOT_FOUND_TITLE, e.getMessage());
+        return new ErrorResponse(NOT_FOUND_TITLE, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResponse handleValidationException(final ValidationException e) {
-        return new ErrorResponse("Ошибка валидации", e.getMessage());
+        log.error("{}: {}", VALIDATION_ERROR_TITLE, e.getMessage());
+        return new ErrorResponse(VALIDATION_ERROR_TITLE, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResponse handleValidationException(final HttpMessageNotReadableException e) {
-        return new ErrorResponse("Ошибка валидации", e.getMessage());
+        log.error("{}: {}", VALIDATION_ERROR_TITLE, e.getMessage());
+        return new ErrorResponse(VALIDATION_ERROR_TITLE, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -42,13 +52,22 @@ public class ErrorHandler {
                     return fieldError.getField() + ": " + (defaultMessage != null ? defaultMessage : "Ошибка валидации");
                 })
                 .collect(Collectors.joining("; "));
-        return new ErrorResponse("Ошибка валидации", errorMessage);
+        log.error("{}: {}", VALIDATION_ERROR_TITLE, errorMessage);
+        return new ErrorResponse(VALIDATION_ERROR_TITLE, errorMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResponse handleValidationException(final ConstraintViolationException e) {
+        log.error("{}: {}", VALIDATION_ERROR_TITLE, e.getMessage());
+        return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResponse handleOtherExceptions(final Exception e) {
-        return new ErrorResponse("Внутренняя ошибка", e.getMessage());
+        log.error("{}: {}", INTERNAL_ERROR_TITLE, e.getMessage());
+        return new ErrorResponse(INTERNAL_ERROR_TITLE, e.getMessage());
     }
 
 }

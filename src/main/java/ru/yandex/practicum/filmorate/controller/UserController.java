@@ -1,15 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
-@Slf4j
+@Validated
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -33,27 +34,27 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id) {
+    public User getUserById(@PathVariable @Positive int id) {
         return userService.getUserById(id);
     }
 
     @PutMapping("/{userId}/friends/{friendId}")
-    public User addUserToFriends(@PathVariable int userId, @PathVariable int friendId) {
+    public User addUserToFriends(@PathVariable @Positive int userId, @PathVariable @Positive int friendId) {
         return userService.addUserToFriends(userId, friendId);
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
-    public User deleteFromFriends(@PathVariable int userId, @PathVariable int friendId) {
+    public User deleteFromFriends(@PathVariable @Positive int userId, @PathVariable @Positive int friendId) {
         return userService.deleteFromFriends(userId, friendId);
     }
 
     @GetMapping("/{userId}/friends")
-    public List<User> getFriends(@PathVariable int userId) {
+    public List<User> getFriends(@PathVariable @Positive int userId) {
         return userService.getFriends(userId);
     }
 
     @GetMapping("/{userId}/friends/common/{otherUserId}")
-    public List<User> getCommonFriends(@PathVariable int userId, @PathVariable int otherUserId) {
+    public List<User> getCommonFriends(@PathVariable @Positive int userId, @PathVariable @Positive int otherUserId) {
         return userService.getCommonFriends(userId, otherUserId);
     }
 
