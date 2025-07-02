@@ -52,7 +52,7 @@ class FilmorateApplicationTests {
     @Test
     void shouldUseLoginWhenNameIsBlank() {
         User user = new User();
-        user.setEmail("invalid-email");
+        user.setEmail("test@mail.ru");
         user.setLogin("validLogin");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
