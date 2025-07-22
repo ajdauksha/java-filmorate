@@ -36,20 +36,23 @@ public class UserService {
 
     public User addUserToFriends(int userId, int friendId) {
         User user = getUserById(userId);
+        // проверяем, что такой пользователь существует
+        getUserById(friendId);
         Set<Integer> friends = user.getFriends();
 
         if (friends.contains(friendId)) {
             throw new ValidationException("Пользователи %d и %d уже являются друзьями".formatted(userId, friendId));
         }
 
-        getUserById(userId).getFriends().add(friendId);
-        getUserById(friendId).getFriends().add(userId);
-        return getUserById(userId);
+        user.getFriends().add(friendId);
+        log.info("Пользователи {} и {} теперь друзья", userId, friendId);
+        return updateUser(user);
     }
 
     public User deleteFromFriends(int userId, int friendId) {
         User user = getUserById(userId);
-        User friend = getUserById(friendId);
+        // проверяем, что такой пользователь существует
+        getUserById(friendId);
 
         Set<Integer> userFriends = user.getFriends();
 
@@ -64,8 +67,7 @@ public class UserService {
         }
 
         userFriends.remove(friendId);
-        friend.getFriends().remove(userId);
-        return getUserById(userId);
+        return updateUser(user);
     }
 
     public List<User> getFriends(int userId) {

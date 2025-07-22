@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.LikeStorage;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
+    private final LikeStorage likeStorage;
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -44,7 +46,7 @@ public class FilmService {
         }
 
         likedByUsers.add(userId);
-
+        likeStorage.addLike(filmId, userId);
         return film;
     }
 
@@ -59,7 +61,7 @@ public class FilmService {
         }
 
         likedByUsers.remove(userId);
-
+        likeStorage.deleteLike(filmId, userId);
         return film;
     }
 

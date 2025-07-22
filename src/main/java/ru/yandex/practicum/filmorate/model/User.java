@@ -4,13 +4,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Slf4j
 @Data
 public class User {
     private int id;
