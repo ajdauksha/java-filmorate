@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ResourceNotFoundException;
@@ -21,6 +22,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class FilmorateApplicationTests {
 
     @Autowired
@@ -180,7 +182,7 @@ class FilmorateApplicationTests {
                 userController.updateUser(user)
         );
 
-        assertEquals("Пользователь c id 999 не найден", exception.getMessage());
+        assertEquals("Пользователь c id 999 не найден", exception.getMessage());
     }
 
     @Test

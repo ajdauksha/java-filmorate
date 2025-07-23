@@ -23,6 +23,8 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
     private Set<Integer> likedByUsers = new HashSet<>();
+    private Set<Genre> genres = new HashSet<>();
+    private Mpa mpa;
 
     public void setReleaseDate(LocalDate releaseDate) {
         if (releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
