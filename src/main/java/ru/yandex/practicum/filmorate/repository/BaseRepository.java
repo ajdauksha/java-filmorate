@@ -63,4 +63,8 @@ public class BaseRepository<T> {
         }
     }
 
+    protected void batchUpdate(String query, List<Object[]> batchArgs) {
+        jdbc.batchUpdate(query, batchArgs);
+    }
+
 }

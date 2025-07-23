@@ -44,43 +44,17 @@ public class UserService {
             throw new ValidationException("Пользователи %d и %d уже являются друзьями".formatted(userId, friendId));
         }
 
-        user.getFriends().add(friendId);
+        friends.add(friendId);
         log.info("Пользователи {} и {} теперь друзья", userId, friendId);
         return updateUser(user);
     }
 
     public User deleteFromFriends(int userId, int friendId) {
-        User user = getUserById(userId);
-        // проверяем, что такой пользователь существует
-        getUserById(friendId);
-
-        Set<Integer> userFriends = user.getFriends();
-
-        if (userFriends == null || userFriends.isEmpty()) {
-            log.warn("У пользователя {} список друзей пуст", userId);
-            return user;
-        }
-
-        if (!userFriends.contains(friendId)) {
-            log.warn("Пользователи {} и {} не являются друзьями", userId, friendId);
-            return user;
-        }
-
-        userFriends.remove(friendId);
-        return updateUser(user);
+        return userStorage.deleteFromFriends(userId, friendId);
     }
 
     public List<User> getFriends(int userId) {
-        User user = getUserById(userId);
-        Set<Integer> friends = user.getFriends();
-
-        if (friends == null || friends.isEmpty()) {
-            return List.of();
-        }
-
-        return friends.stream()
-                .map(this::getUserById)
-                .collect(Collectors.toList());
+        return userStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(int userId, int otherUserId) {

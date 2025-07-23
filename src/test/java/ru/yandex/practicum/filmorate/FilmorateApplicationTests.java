@@ -182,7 +182,7 @@ class FilmorateApplicationTests {
                 userController.updateUser(user)
         );
 
-        assertEquals("Пользователь c id 999 не найден", exception.getMessage());
+        assertEquals("Пользователь c id 999 не найден", exception.getMessage());
     }
 
     @Test

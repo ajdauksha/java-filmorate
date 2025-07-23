@@ -45,6 +45,18 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
+    @Override
+    public List<User> getFriends(int userId) {
+        return users.get(userId).getFriends().stream().map(users::get).toList();
+    }
+
+    @Override
+    public User deleteFromFriends(int userId, int friendId) {
+        User user = users.get(userId);
+        user.getFriends().remove(friendId);
+        return users.get(userId);
+    }
+
     public User validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             log.info("Имя пользователя не указано. Заполняется логином.");

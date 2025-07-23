@@ -7,26 +7,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import ru.yandex.practicum.filmorate.exception.ResourceNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.mappers.FilmRowMapper;
+import ru.yandex.practicum.filmorate.repository.mappers.*;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmGenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.film.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.film.LikesDbStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
+import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({FilmRepository.class, FilmRowMapper.class})
+@Import({
+        FilmDbStorage.class, FilmRowMapper.class,
+        GenreDbStorage.class, GenreRowMapper.class,
+        FilmGenreDbStorage.class, FilmGenresRowMapper.class,
+        MpaDbStorage.class, MpaRowMapper.class,
+        LikesDbStorage.class, LikesRowMapper.class
+})
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ActiveProfiles("test")
-class FilmRepositoryTests {
+class FilmDbStorageTests {
 
-    private final FilmRepository filmRepository;
+    private final FilmDbStorage filmRepository;
     private Film testFilm;
 
     @BeforeEach
@@ -36,9 +51,7 @@ class FilmRepositoryTests {
         testFilm.setDescription("Test Description");
         testFilm.setReleaseDate(LocalDate.of(2020, 1, 1));
         testFilm.setDuration(120);
-        Mpa mpa = new Mpa();
-        mpa.setId(1);
-        mpa.setName("G");
+        Mpa mpa = new Mpa(1, "G");
         testFilm.setMpa(mpa);
     }
 
@@ -68,25 +81,18 @@ class FilmRepositoryTests {
 
     @Test
     void getFilmById_shouldReturnEmptyOptional_whenFilmNotFound() {
-        Optional<Film> result = filmRepository.getFilmById(999);
-
-        assertThat(result)
-                .isEmpty();
+        assertThatThrownBy(() -> filmRepository.getFilmById(999)).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
     void getFilmById_shouldReturnFilm_whenFilmExists() {
         Film addedFilm = filmRepository.addFilm(testFilm);
-        Optional<Film> result = filmRepository.getFilmById(addedFilm.getId());
+        Film result = filmRepository.getFilmById(addedFilm.getId());
 
         assertThat(result)
-                .isPresent()
-                .hasValueSatisfying(film ->
-                        assertThat(film)
-                                .usingRecursiveComparison()
-                                .ignoringFields("genres", "likes", "mpa")
-                                .isEqualTo(addedFilm)
-                );
+                .usingRecursiveComparison()
+                .ignoringFields("genres", "likes", "mpa")
+                .isEqualTo(addedFilm);
     }
 
 }
