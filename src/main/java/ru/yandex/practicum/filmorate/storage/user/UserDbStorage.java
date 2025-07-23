@@ -28,11 +28,11 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String DELETE_FRIEND = "DELETE FROM friendships WHERE user_id = ? AND friend_id = ?";
     private static final String DELETE_ALL_FRIENDS = "DELETE FROM friendships WHERE user_id = ?";
     private static final String GET_FRIENDS_WITH_DETAILS = """
-            SELECT u.* FROM users u 
-            JOIN friendships f ON u.id = f.friend_id 
+            SELECT u.* FROM users u
+            JOIN friendships f ON u.id = f.friend_id
             WHERE f.user_id = ?""";
     private static final String GET_FRIENDS_FOR_USERS = """
-            SELECT user_id, friend_id FROM friendships 
+            SELECT user_id, friend_id FROM friendships
             WHERE user_id IN (%s)""";
 
     private final FriendshipsDbStorage friendshipsDbStorage;
